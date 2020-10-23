@@ -12,6 +12,7 @@ import java.util.Timer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -85,20 +86,25 @@ public class Visual {
         
         //做对的题目数
         JLabel Label5 = new JLabel("0");
-        Label5.setBounds(400,10,30,50);
+        Label5.setBounds(360,10,60,50);
         Label5.setFont(f3);
         Label5.setForeground(Color.RED);
         panel.add(Label5);
         
         //总题数
         JLabel Label6 = new JLabel("|0");
-        Label6.setBounds(430,10,60,50);
+        Label6.setBounds(410,10,100,50);
         Label6.setFont(f3);
         panel.add(Label6);
         
+        //模式选择(增量二)
+        JLabel Label7 = new JLabel("模式选择:");
+        Label7.setBounds(270, 250, 60, 30);
+        panel.add(Label7);
+        
         //数一
         JLabel num1 = new JLabel("...");
-        num1.setBounds(100, 90, 40, 40);
+        num1.setBounds(100, 90, 80, 40);
         num1.setForeground(Color.red);
         num1.setFont(f2);
         panel.add(num1);
@@ -112,7 +118,7 @@ public class Visual {
         
         //运算符
         JLabel op = new JLabel("+");
-        op.setBounds(50, 150, 30, 30);
+        op.setBounds(50, 140, 40, 40);
         op.setForeground(Color.RED);
         op.setFont(f2);
         panel.add(op);
@@ -121,6 +127,21 @@ public class Visual {
         JTextField ans = new JTextField(20);
         ans.setBounds(50,200,165,25);
         panel.add(ans);
+        
+        
+        /*
+         * -----------------------------------------------------------------------------------------------
+         * 以下是增量二内容
+         * */
+        String[] listData = new String[]{"加减混合", "乘除混合", "加法", "减法", "乘法", "除法", "四则混合"};
+        //创建下拉列表框
+        final JComboBox<String> comboBox = new JComboBox<String>(listData);
+        comboBox.setSelectedIndex(0);
+        comboBox.setBounds(330, 250, 80, 30);
+        panel.add(comboBox);        
+        /*
+         * -----------------------------------------------------------------------------------------------
+         * */
         
         
         // 提交答案按钮
@@ -166,7 +187,7 @@ public class Visual {
         	//添加监听器
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				p = ProblemGenerator.Generate();
+				p = ProblemGenerator.Generate(comboBox.getSelectedIndex());
 				num1.setText(String.valueOf(p.getnum1()));
 				num2.setText(String.valueOf(p.getnum2()));
 				op.setText(String.valueOf(p.getop()));
@@ -206,6 +227,10 @@ public class Visual {
         	//添加监听器
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(gettime.getText().equals("开始计时")) {
+					JOptionPane.showMessageDialog(frame, "请先开始计时", "错误", 0);
+					return;
+				}
 				timer.cancel();//停止计时
 				timer = new Timer();
 			}
@@ -213,5 +238,30 @@ public class Visual {
         /*
          * -----------------------------------------------------------------------------------------------
          * */
+        
+        
+        //增量二
+        JButton exit = new JButton("退出");
+        exit.setBounds(440, 270, 60, 30);
+        exit.setBackground(Color.WHITE);
+        exit.setForeground(Color.RED);
+        panel.add(exit);
+        exit.addActionListener(new ActionListener() {
+        	//添加监听器
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				int result = JOptionPane.showConfirmDialog(frame, "确认退出？", "提示", JOptionPane.YES_NO_CANCEL_OPTION );
+				System.out.println(result);
+				if(result == 0) {
+					if(gettime.getText().equals("重新开始计时"))//避免计时器线程一直工作
+						timer.cancel();
+					frame.dispose();
+				}
+					
+			}
+        	
+        });
+        
     }
 }
